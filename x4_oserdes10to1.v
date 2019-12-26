@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
+// Company: BME Simonyi K√°roly Szakkoll√©gium Lego k√∂re
+// Engineer: Erd√©lyi Janka
 // 
 // Create Date: 12.11.2019 21:00:36
 // Design Name: 
@@ -44,45 +44,45 @@ output wire tmds_clock_out_n
     );
     
     oserdes_10to1 one(
- //”rajel Ès reset.
- .clk(clk), //1x Ûrajel bemenet.
- .clk_5x(clk_5x), //5x Ûrajel bemenet (DDR mÛd).
+ //√ìrajel √©s reset.
+ .clk(clk), //1x √≥rajel bemenet.
+ .clk_5x(clk_5x), //5x √≥rajel bemenet (DDR m√≥d).
  .rst(rst), //Aszinkron reset jel.
 
  //10 bites adat bemenet.
  .data_in(tmds_one),
 
- //Differenci·lis soros adat kimenet.
+ //Differenci√°lis soros adat kimenet.
  .dout_p(dout_pone),
  .dout_n(dout_none)
 );
 
 
     oserdes_10to1 two(
- //”rajel Ès reset.
- .clk(clk), //1x Ûrajel bemenet.
- .clk_5x(clk_5x), //5x Ûrajel bemenet (DDR mÛd).
+ //√ìrajel √©s reset.
+ .clk(clk), //1x √≥rajel bemenet.
+ .clk_5x(clk_5x), //5x √≥rajel bemenet (DDR m√≥d).
  .rst(rst), //Aszinkron reset jel.
 
  //10 bites adat bemenet.
  .data_in(tmds_two),
 
- //Differenci·lis soros adat kimenet.
+ //Differenci√°lis soros adat kimenet.
  .dout_p(dout_ptwo),
  .dout_n(dout_ntwo)
 );
 
 
     oserdes_10to1 three(
- //”rajel Ès reset.
- .clk(clk), //1x Ûrajel bemenet.
- .clk_5x(clk_5x), //5x Ûrajel bemenet (DDR mÛd).
+ //√ìrajel √©s reset.
+ .clk(clk), //1x √≥rajel bemenet.
+ .clk_5x(clk_5x), //5x √≥rajel bemenet (DDR m√≥d).
  .rst(rst), //Aszinkron reset jel.
 
  //10 bites adat bemenet.
  .data_in(tmds_three),
 
- //Differenci·lis soros adat kimenet.
+ //Differenci√°lis soros adat kimenet.
  .dout_p(dout_pthree),
  .dout_n(dout_nthree)
 );
@@ -91,16 +91,16 @@ output wire tmds_clock_out_n
 wire clk_out;
 ODDR #(
  .DDR_CLK_EDGE("OPPOSITE_EDGE"), // "OPPOSITE_EDGE" vagy "SAME_EDGE".
- .INIT(1'b0), // A Q kimenet kezdeti ÈrtÈke.
- .SRTYPE("ASYNC") // "SYNC" vagy "ASYNC" be·llÌt·s/tˆrlÈs.
+ .INIT(1'b0), // A Q kimenet kezdeti √©rt√©ke.
+ .SRTYPE("ASYNC") // "SYNC" vagy "ASYNC" be√°ll√≠t√°s/t√∂rl√©s.
 ) ODDR_clk (
  .Q(clk_out), // 1 bites DDR kimenet.
- .C(clk), // 1 bites Ûrajel bemenet.
- .CE(1'b1), // 1 bites Ûrajel engedÈlyezı bemenet.
- .D1(1'b1), // 1 bites adat bemenet (felfutÛ Èl).
- .D2(1'b0), // 1 bites adat bemenet (lefutÛ Èl).
- .R(rst), // 1 bites tˆrlı bemenet.
- .S(1'b0) // 1 bites 1-be ·llÌtÛ bemenet.
+ .C(clk), // 1 bites √≥rajel bemenet.
+ .CE(1'b1), // 1 bites √≥rajel enged√©lyez√µ bemenet.
+ .D1(1'b1), // 1 bites adat bemenet (felfut√≥ √©l).
+ .D2(1'b0), // 1 bites adat bemenet (lefut√≥ √©l).
+ .R(rst), // 1 bites t√∂rl√µ bemenet.
+ .S(1'b0) // 1 bites 1-be √°ll√≠t√≥ bemenet.
 );
 
 OBUFDS #(

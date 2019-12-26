@@ -26,12 +26,22 @@ module dvi(
     input [7:0] blue_in,
     output [10:0] column_addr,
     output [9:0] row_addr,
-    output [9:0] data0,
-    output [9:0] data1,
-    output [9:0] data2
+	 // 0. (kék) csatorna
+    output dout0_p,
+    output dout0_n,
+	 // 1. (zöld) csatorna
+    output dout1_p,
+    output dout1_n,
+	 // 2. (vörös) csatorna
+    output dout2_p,
+    output dout2_n,
+	 // 3. (órajel) csatorna
+    output dout3_p,
+    output dout3_n
 );
 
 wire [7:0] red, green, blue;
+wire [9:0] data0, data1, data2;
 wire vsync, hsync, visible;
 
 vga view(
@@ -63,5 +73,22 @@ DVICoder coder(
     .data1(data1), 
     .data2(data2)
 );
+
+x4_oserdes10to1 serdes (
+    .clk(clk), 
+    .clk_5x(clk_5x), 
+    .rst(rst), 
+    .tmds_one(data0), 
+    .tmds_two(data1), 
+    .tmds_three(data2), 
+    .dout_pone(dout0_p), 
+    .dout_none(dout0_n), 
+    .dout_ptwo(dout1_p), 
+    .dout_ntwo(dout1_n), 
+    .dout_pthree(dout2_p), 
+    .dout_nthree(dout2_n), 
+    .tmds_clock_out_p(dout3_p), 
+    .tmds_clock_out_n(dout3_n)
+    );
 
 endmodule

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
+// Company: BME Simonyi K√°roly Szakkoll√©gium Lego k√∂re
+// Engineer: Erd√©lyi Janka
 // 
 // Create Date: 05.11.2019 18:22:57
 // Design Name: 
@@ -20,15 +20,15 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module oserdes_10to1(
- //”rajel Ès reset.
- input wire clk, //1x Ûrajel bemenet.
- input wire clk_5x, //5x Ûrajel bemenet (DDR mÛd).
+ //√ìrajel √©s reset.
+ input wire clk, //1x √≥rajel bemenet.
+ input wire clk_5x, //5x √≥rajel bemenet (DDR m√≥d).
  input wire rst, //Aszinkron reset jel.
 
  //10 bites adat bemenet.
  input wire [9:0] data_in,
 
- //Differenci·lis soros adat kimenet.
+ //Differenci√°lis soros adat kimenet.
  output wire dout_p,
  output wire dout_n
  //output wire data_to_iob
@@ -125,7 +125,7 @@ OSERDESE2 #(
  .TCE(1'b0)
 );
 //*****************************************************************************
-//* Differenci·lis kimeneti buffer. *
+//* Differenci√°lis kimeneti buffer. *
 //*****************************************************************************
 OBUFDS #(
  .IOSTANDARD("TMDS_33"),
