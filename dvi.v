@@ -19,13 +19,22 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module dvi(
+	// Pixel órajel
     input clk,
-    input rst,
-    input [7:0] red_in,
-    input [7:0] green_in,
-    input [7:0] blue_in,
-    output [10:0] column_addr,
-    output [9:0] row_addr,
+	 // 5x-ös órajel
+    input clk5x,
+	 // AXI4S órajel
+	input axis_aclk,
+	// AXI4S portok
+	input axis_aresetn,
+	input axis_tvalid,
+	output axis_tready,
+	input [7:0] axis_tdata,
+	input [0:0] axis_tstrb,
+	input [0:0] axis_tkeep,
+	input axis_tlast,
+//	input [0:0] axis_tid,
+//	input [0:0] axis_tdest,
 	 // 0. (kék) csatorna
     output dout0_p,
     output dout0_n,
@@ -40,9 +49,29 @@ module dvi(
     output dout3_n
 );
 
+wire [7:0] red_in, green_in, blue_in;
+wire rst=!axis_aresetn;
+wire [10:0] column_addr;
+wire [9:0] row_addr;
 wire [7:0] red, green, blue;
 wire [9:0] data0, data1, data2;
 wire vsync, hsync, visible;
+
+vram videoram (
+    .axis_aclk(axis_aclk), 
+    .axis_aresetn(axis_aresetn), 
+    .axis_tvalid(axis_tvalid), 
+    .axis_tready(axis_tready), 
+    .axis_tdata(axis_tdata), 
+    .axis_tstrb(axis_tstrb), 
+    .axis_tkeep(axis_tkeep), 
+    .axis_tlast(axis_tlast), 
+    .vram_col(column_addr), 
+    .vram_row(row_addr), 
+    .vram_red(red_in), 
+    .vram_green(green_in), 
+    .vram_blue(blue_in)
+    );
 
 vga view(
     .clk(clk), 
@@ -76,7 +105,7 @@ DVICoder coder(
 
 x4_oserdes10to1 serdes (
     .clk(clk), 
-    .clk_5x(clk_5x), 
+    .clk_5x(clk5x), 
     .rst(rst), 
     .tmds_one(data0), 
     .tmds_two(data1), 
