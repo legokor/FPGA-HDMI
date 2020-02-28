@@ -19,65 +19,62 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module dvi(
-	// Pixel órajel
-    input clk,
-	 // 5x-ös órajel
-    input clk5x,
-	 // AXI4S órajel
+	// 5x-ös órajel
+   input clk5x,
+	// AXI4S órajel
 	input axis_aclk,
+	
 	// AXI4S portok
 	input axis_aresetn,
 	input axis_tvalid,
 	output axis_tready,
-	input [7:0] axis_tdata,
-	input [0:0] axis_tstrb,
-	input [0:0] axis_tkeep,
+	input [23:0] axis_tdata,
 	input axis_tlast,
+	// AXI4S null és pozíciós bájt jelzők, nem támogatottak
+	// (vagyis mindig 24 adatbitet kell beküldeni!)
+//	input [2:0] axis_tstrb,
+//	input [2:0] axis_tkeep,
+	//AXI4S routing információ, nem használjuk
 //	input [0:0] axis_tid,
 //	input [0:0] axis_tdest,
-	 // 0. (kék) csatorna
-    output dout0_p,
-    output dout0_n,
-	 // 1. (zöld) csatorna
-    output dout1_p,
-    output dout1_n,
-	 // 2. (vörös) csatorna
-    output dout2_p,
-    output dout2_n,
-	 // 3. (órajel) csatorna
-    output dout3_p,
-    output dout3_n
+	
+	// DVI kimenő jelek
+	// 0. (kék) csatorna
+	output dout0_p,
+	output dout0_n,
+	// 1. (zöld) csatorna
+	output dout1_p,
+	output dout1_n,
+	// 2. (vörös) csatorna
+	output dout2_p,
+	output dout2_n,
+	// 3. (órajel) csatorna
+	output dout3_p,
+	output dout3_n
 );
 
-wire [7:0] red_in, green_in, blue_in;
+// Pixel órajel
+wire clk=axis_aclk;
 wire rst=!axis_aresetn;
-wire [10:0] column_addr;
-wire [9:0] row_addr;
+
+// Keret eleje
+reg frame_sync;
+always @(posedge clk)
+	frame_sync <= axis_tlast;
+
+wire [7:0] red_in, green_in, blue_in;
 wire [7:0] red, green, blue;
 wire [9:0] data0, data1, data2;
 wire vsync, hsync, visible;
 
-vram videoram (
-    .axis_aclk(axis_aclk), 
-    .axis_aresetn(axis_aresetn), 
-    .axis_tvalid(axis_tvalid), 
-    .axis_tready(axis_tready), 
-    .axis_tdata(axis_tdata), 
-    .axis_tstrb(axis_tstrb), 
-    .axis_tkeep(axis_tkeep), 
-    .axis_tlast(axis_tlast), 
-    .vram_col(column_addr), 
-    .vram_row(row_addr), 
-    .vram_red(red_in), 
-    .vram_green(green_in), 
-    .vram_blue(blue_in)
-    );
+assign {red_in, green_in, blue_in}=axis_tdata;
+assign axis_tready=visible;
 
 vga view(
     .clk(clk), 
-    .rst(rst), 
-    .column_addr(column_addr), 
-    .row_addr(row_addr), 
+    .rst(rst|frame_sync), 
+    .column_addr(), 
+    .row_addr(), 
     .red_in(red_in), 
     .green_in(green_in), 
     .blue_in(blue_in), 
