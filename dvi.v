@@ -28,7 +28,7 @@ module dvi(
 	input axis_aresetn,
 	input axis_tvalid,
 	output axis_tready,
-	input [23:0] axis_tdata,
+	input [31:0] axis_tdata,
 	input axis_tlast,
 	// AXI4S null és pozíciós bájt jelzők, nem támogatottak
 	// (vagyis mindig 24 adatbitet kell beküldeni!)
@@ -67,12 +67,12 @@ wire [7:0] red, green, blue;
 wire [9:0] data0, data1, data2;
 wire vsync, hsync, visible;
 
-assign {red_in, green_in, blue_in}=axis_tdata;
+assign {red_in, green_in, blue_in}=axis_tdata[23:0];
 assign axis_tready=visible;
 
 vga view(
     .clk(clk), 
-    .rst(rst|frame_sync), 
+    .rst(rst), 
     .column_addr(), 
     .row_addr(), 
     .red_in(red_in), 
@@ -83,6 +83,7 @@ vga view(
     .blue_out(blue), 
     .vsync_out(vsync), 
     .hsync_out(hsync), 
+    .frame_sync(frame_sync),
     .visible(visible)
 );
 

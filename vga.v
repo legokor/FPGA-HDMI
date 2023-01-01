@@ -7,7 +7,7 @@ module vga #(
     parameter HSPULSE  = 128,
     parameter HBPORCH  = 88,
     parameter HSINVERT = 0,
-    
+
     parameter VBITS    = 10,
     parameter VVISIBLE = 600,
     parameter VFPORCH  = 1,
@@ -17,20 +17,21 @@ module vga #(
 )(
     input clk,
     input rst,
-    
+
     output [HBITS-1 : 0] column_addr,
     output [VBITS-1 : 0] row_addr,
 
     input [7:0] red_in,
     input [7:0] green_in,
     input [7:0] blue_in,
-	 
+ 
     output [7:0] red_out,
     output [7:0] green_out,
     output [7:0] blue_out,
     output vsync_out,
     output hsync_out,
-	 output visible
+    input frame_sync,
+    output visible
 );
 
 localparam HSIZE = HVISIBLE + HFPORCH + HSPULSE + HBPORCH;
@@ -44,22 +45,35 @@ localparam VSEND = VVISIBLE + VFPORCH + VSPULSE;
 reg [HBITS-1 : 0] hcntr;
 reg [VBITS-1 : 0] vcntr;
 
+wire enable = 1'b1;
+
+wire hoverflow = hcntr == HSIZE - 1;
+wire voverflow = vcntr == VSIZE - 1;
+
 always @(posedge clk)
-	if (rst | (hcntr == HSIZE-1)) 
+	if (rst)
 		hcntr <= 10'b0;
-	else
-		hcntr <= hcntr + 1;
+	else if (frame_sync)
+		hcntr <= HVISIBLE;
+	else if(enable)
+		if(hoverflow)
+			hcntr <= 10'b0;
+		else
+			hcntr <= hcntr + 1;
 		
 always @(posedge clk)
-	if (rst | (vcntr == VSIZE-1 && hcntr == HSIZE - 1)) 
+	if (rst)
 		vcntr <= 10'b0;
-	else if (hcntr == HSIZE-1)
-		vcntr <= vcntr + 1;
+	else if (frame_sync)
+		vcntr <= VVISIBLE;
+	else if (enable & hoverflow)
+		if(voverflow)
+			vcntr <= 10'b0;
+		else
+			vcntr <= vcntr + 1;
 
 assign column_addr = hcntr;
 assign row_addr = vcntr;
-
-
 
 reg [HBITS-1 : 0] hcntr_prev;
 reg [VBITS-1 : 0] vcntr_prev;
@@ -83,8 +97,8 @@ wire active_region;
 assign active_region = (hcntr_prev < HVISIBLE) & (vcntr_prev < VVISIBLE);
 assign visible=active_region;
 
-assign red_out   = active_region ? red_in   : 1'b0;
-assign blue_out  = active_region ? blue_in  : 1'b0;
-assign green_out = active_region ? green_in : 1'b0;
+assign red_out   = active_region ? red_in   : 'b0;
+assign blue_out  = active_region ? blue_in  : 'b0;
+assign green_out = active_region ? green_in : 'b0;
 
 endmodule
