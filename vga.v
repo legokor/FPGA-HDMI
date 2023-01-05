@@ -42,7 +42,9 @@ localparam VSIZE = VVISIBLE + VFPORCH + VSPULSE + VBPORCH;
 localparam VSBEGIN = VVISIBLE + VFPORCH;
 localparam VSEND = VVISIBLE + VFPORCH + VSPULSE;
 
+(* mark_debug = "true" *)
 reg [HBITS-1 : 0] hcntr;
+(* mark_debug = "true" *)
 reg [VBITS-1 : 0] vcntr;
 
 wire enable = 1'b1;
@@ -75,26 +77,17 @@ always @(posedge clk)
 assign column_addr = hcntr;
 assign row_addr = vcntr;
 
-reg [HBITS-1 : 0] hcntr_prev;
-reg [VBITS-1 : 0] vcntr_prev;
-
-always @(posedge clk) begin
-	hcntr_prev <= hcntr;
-	vcntr_prev <= vcntr;
-end
-
-
 wire hsync;
 wire vsync;
 
-assign hsync = (hcntr_prev >= HSBEGIN) & (hcntr_prev < HSEND);
-assign vsync = (vcntr_prev >= VSBEGIN) & (vcntr_prev < VSEND);
+assign hsync = (hcntr >= HSBEGIN) & (hcntr < HSEND);
+assign vsync = (vcntr >= VSBEGIN) & (vcntr < VSEND);
 
 assign hsync_out = HSINVERT ? ~hsync : hsync;
 assign vsync_out = VSINVERT ? ~vsync : vsync;
 
 wire active_region;
-assign active_region = (hcntr_prev < HVISIBLE) & (vcntr_prev < VVISIBLE);
+assign active_region = (hcntr < HVISIBLE) & (vcntr < VVISIBLE);
 assign visible=active_region;
 
 assign red_out   = active_region ? red_in   : 'b0;

@@ -83,7 +83,7 @@ vga view(
     .blue_out(blue), 
     .vsync_out(vsync), 
     .hsync_out(hsync), 
-    .frame_sync(frame_sync),
+    .frame_sync(axis_tlast),
     .visible(visible)
 );
 
