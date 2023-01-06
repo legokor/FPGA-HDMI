@@ -38,6 +38,13 @@ module dvi(
 //	input [0:0] axis_tid,
 //	input [0:0] axis_tdest,
 	
+	// VGA kimenet
+	output [1:0] vga_r,
+	output [1:0] vga_g,
+	output [1:0] vga_b,
+	output vga_vsync,
+	output vga_hsync,
+	
 	// DVI kimenő jelek
 	// 0. (kék) csatorna
 	output dout0_p,
@@ -69,6 +76,12 @@ wire vsync, hsync, visible;
 
 assign {red_in, green_in, blue_in}=axis_tdata[23:0];
 assign axis_tready=visible;
+
+assign vga_r=red[7:6];
+assign vga_g=green[7:6];
+assign vga_b=blue[7:6];
+assign vga_vsync=vsync;
+assign vga_hsync=hsync;
 
 vga view(
     .clk(clk), 
